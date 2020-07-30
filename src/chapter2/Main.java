@@ -6,14 +6,47 @@ import java.util.Arrays;
  * @author xqdd
  * @date 2020/7/28 13:42
  */
-@SuppressWarnings({"rawtypes", "ManualArrayCopy"})
+@SuppressWarnings({"rawtypes", "ManualArrayCopy", "unchecked"})
 public class Main {
 
     public static void main(String[] args) {
         Integer[] a = {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 4, 6, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
 //        mergeSort(a, 0, a.length - 1);
-        quickSort(a, 0, a.length - 1);
+        quickSort3(a, 0, a.length - 1);
         System.out.println(Arrays.toString(a));
+    }
+
+    /**
+     * 三向切分的快速排序(小于、等于、等于)
+     * 用于重复数据比较多的数组
+     */
+    public static void quickSort3(Comparable[] a, int lo, int hi) {
+        if (hi <= lo) {
+            return;
+        }
+        int lt = lo;
+        int i = lo + 1;
+        int gt = hi;
+        var v = a[lo];
+        //这是一个不断将相同的v聚集到中间的过程
+        //知道处理到最后一个已知的边界，即最后一个重复的v
+        while (i <= gt) {
+            int com = a[i].compareTo(v);
+            //当前的值小于v，与下界进行交换，下界值一定为v，所以并且i++处理下一个值
+            if (com < 0) {
+                exchange(a, lt++, i++);
+            }
+            //当前的值大于v，与上界交换，上界减1，上界值不一定为v，所以i不加
+            else if (com > 0) {
+                exchange(a, i, gt--);
+            }
+            //相等，直接处理下一个
+            else {
+                i++;
+            }
+        }
+        quickSort3(a, lo, lt - 1);
+        quickSort3(a, gt + 1, hi);
     }
 
 
