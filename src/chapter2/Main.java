@@ -10,11 +10,82 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String[] args) {
-        Integer[] a = {15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 4, 6, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14};
+        Integer[] a = {-1, 0, 1, 2, 3, 61, 66};
 //        mergeSort(a, 0, a.length - 1);
-        quickSort3(a, 0, a.length - 1);
+//        quickSort3(a, 0, a.length - 1);
+        heapSort(a);
         System.out.println(Arrays.toString(a));
     }
+
+    /**
+     * 堆排序，注意a[0]忽略掉
+     */
+    public static void heapSort(Comparable[] a) {
+        //第一步，将普通数组转化为堆
+        /**1.上浮法，遍次数为n
+         for (int i = 1; i < a.length; i++) {
+         swim(a, i);
+         }
+         **/
+        //2.下潜法，比较高效，遍历次数为n/2
+        int n = a.length;
+        for (int k = n / 2; k >= 1; k--) {
+            sink(a, k, n);
+        }
+
+
+        //第二步，将堆转为有序的数组
+        //这里类似选择排序，慢慢的把最大的元素选出来放到后面
+        while (n > 1) {
+            //此时最大的元素肯定在最上面，依次将 最大的元素放最后
+            headExchange(a, 1, n--);
+            //然后重新构造堆
+            sink(a, 1, n);
+        }
+    }
+
+    /**
+     * 堆排序,将小的元素下潜
+     */
+    public static void sink(Comparable[] a, int k, int n) {
+        //下潜直到n
+        while (2 * k <= n) {
+            //获得子节点
+            int j = 2 * k;
+            //选两个子节点中比较大的那一个
+            if (j < n && less(a, j, j + 1)) {
+                j++;
+            }
+            //若比子节点大，则结束
+            if (!less(a, k, j)) {
+                break;
+            }
+            //符合要求，交换父子节点
+            headExchange(a, k, j);
+            //当前节点设为子节点
+            k = j;
+        }
+    }
+
+    /**
+     * 堆排序,将大的元素上浮
+     */
+    public static void swim(Comparable[] a, int k) {
+        // k大于1并且当前节点大于父节点，则交换
+        while (k > 1 && less(a, k / 2, k)) {
+            headExchange(a, k / 2, k);
+            k = k / 2;
+        }
+    }
+
+    public static boolean less(Comparable[] a, int k, int n) {
+        return less(a[k - 1], a[n - 1]);
+    }
+
+    public static void headExchange(Comparable[] a, int k, int n) {
+        exchange(a, k - 1, n - 1);
+    }
+
 
     /**
      * 三向切分的快速排序(小于、等于、等于)
